@@ -35,7 +35,7 @@ function scatter_mean!(ys::Array{T}, us::Array{T}, xs::Array{<:IntOrTuple}) wher
     ys_ = zero(ys)
     scatter_add!(Ns, one.(us), xs)
     scatter_add!(ys_, us, xs)
-    ys .+= map((x,y) -> ifelse(iszero(y), x, x/y), ys_, Ns)
+    ys .+= save_div.(ys_, Ns)
     return ys
 end
 
