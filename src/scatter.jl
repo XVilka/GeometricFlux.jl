@@ -8,7 +8,7 @@ for op = [:add, :sub, :mul, :div]
     @eval function $fn(ys::Array{T}, us::Array{T}, xs::Array{<:IntOrTuple}) where {T<:Real}
         @simd for k = 1:length(xs)
             k = CartesianIndices(xs)[k]
-            @inbounds ys[:, xs[k]...] .= $(name2op[op]).(ys[:, xs[k]...], us[:, k])
+            @inbounds ys[:, xs[k]...] .= $(name2op[op]).(view(ys, :, xs[k]...), view(us, :, k))
         end
         ys
     end
@@ -17,7 +17,7 @@ end
 function scatter_max!(ys::Array{T}, us::Array{T}, xs::Array{<:IntOrTuple}) where {T<:Real}
     @simd for k = 1:length(xs)
         k = CartesianIndices(xs)[k]
-        @inbounds ys[:, xs[k]...] .= max.(ys[:, xs[k]...], us[:, k])
+        @inbounds ys[:, xs[k]...] .= max.(view(ys, :, xs[k]...), view(us, :, k))
     end
     ys
 end
@@ -25,7 +25,7 @@ end
 function scatter_min!(ys::Array{T}, us::Array{T}, xs::Array{<:IntOrTuple}) where {T<:Real}
     @simd for k = 1:length(xs)
         k = CartesianIndices(xs)[k]
-        @inbounds ys[:, xs[k]...] .= min.(ys[:, xs[k]...], us[:, k])
+        @inbounds ys[:, xs[k]...] .= min.(view(ys, :, xs[k]...), view(us, :, k))
     end
     ys
 end
